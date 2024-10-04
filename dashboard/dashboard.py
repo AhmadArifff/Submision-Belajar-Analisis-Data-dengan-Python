@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -124,3 +125,128 @@ st.write(df_performance)
 # Sidebar information
 st.sidebar.markdown("### Gunakan filter untuk mempersempit analisis.")
 st.sidebar.markdown("Anda dapat memilih bulan atau lokasi tertentu untuk menyesuaikan visualisasi.")
+=======
+import pandas as pd
+import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load data from main_data.csv
+data_path = "main_data.csv"  # Ganti dengan path yang benar
+df = pd.read_csv(data_path)
+
+# Streamlit Dashboard
+st.title("Bike Usage Analysis Dashboard")
+st.write("Welcome to the bike usage analysis dashboard!")
+
+# Data Overview
+st.markdown("### Data Overview")
+st.dataframe(df)  # Tampilkan keseluruhan dataset dalam dataframe yang dapat digulir
+
+st.markdown("### Key Statistics")
+st.write(df.describe())  # Tampilkan statistik kunci dari dataset
+
+# Filter Data
+st.sidebar.header("Filter Data")
+selected_month = st.sidebar.multiselect(
+    "Select Month", 
+    df['month'].unique().tolist(), 
+    default=df['month'].unique().tolist()
+)
+
+selected_weather = st.sidebar.multiselect(
+    "Select Weather", 
+    df['weather'].unique().tolist(), 
+    default=df['weather'].unique().tolist()
+)
+
+selected_season = st.sidebar.multiselect(
+    "Select Season", 
+    df['season'].unique().tolist(), 
+    default=df['season'].unique().tolist()
+)
+
+# Filter the DataFrame based on user input
+filtered_df = df[
+    (df['month'].isin(selected_month)) & 
+    (df['weather'].isin(selected_weather)) & 
+    (df['season'].isin(selected_season))
+]
+
+# Monthly Rentals Analysis
+st.markdown("### Monthly Rentals Analysis")
+st.write("1: January\n\n2: February\n\n3: March\n\n4: April\n\n5: May\n\n6: June\n\n7: July\n\n8: August\n\n9: September\n\n10: October\n\n11: November\n\n12: December")
+
+# Hitung rata-rata total rental per bulan
+monthly_rentals_avg = filtered_df.groupby('month')['total_rentals'].mean()  # Rata-rata total rentals per bulan
+
+# Bar plot dengan warna berbeda untuk setiap bulan
+fig, ax = plt.subplots(figsize=(10, 5))
+colors = sns.color_palette('husl', len(monthly_rentals_avg))  # Menggunakan palet warna "husl" untuk variasi warna
+bars = monthly_rentals_avg.plot(kind='bar', color=colors, ax=ax)  # Warna beragam
+ax.set_title("Average Rentals by Month", fontsize=16)
+ax.set_ylabel("Average Rentals", fontsize=12)
+ax.set_xlabel("Month", fontsize=12)
+ax.set_xticks(range(len(monthly_rentals_avg)))
+ax.set_xticklabels(monthly_rentals_avg.index, rotation=45)
+
+# Menambahkan label data di atas batang
+for bar in bars.patches:
+    ax.annotate(f'{int(bar.get_height())}', 
+                (bar.get_x() + bar.get_width() / 2, bar.get_height()), 
+                ha='center', va='bottom')
+
+st.pyplot(fig)
+
+# Weather Impact Analysis
+st.markdown("### Weather Impact on Rentals")
+st.write("1: Clear, Few clouds, Partly cloudy\n\n2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist\n\n3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds\n\n4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog")
+
+# Ensure that weather condition 4 is included even if no data exists for it
+weather_conditions = {1: 1, 2: 2, 3: 3, 4: 4}
+filtered_df['weather'] = filtered_df['weather'].map(weather_conditions)
+
+# Include all possible weather conditions in the grouping
+weather_rentals = filtered_df.groupby('weather')['total_rentals'].mean().reindex(weather_conditions.values(), fill_value=0)
+
+# Bar plot dengan warna berbeda untuk setiap kondisi cuaca
+fig, ax = plt.subplots(figsize=(10, 5))
+colors = sns.color_palette('coolwarm', len(weather_rentals))  # Palet warna untuk variasi
+bars = weather_rentals.plot(kind='bar', color=colors, ax=ax)
+ax.set_title("Average Rentals by Weather", fontsize=16)
+ax.set_ylabel("Average Rentals", fontsize=12)
+ax.set_xlabel("Weather Condition", fontsize=10)
+plt.xticks(rotation=45)
+
+# Menambahkan label data di atas batang
+for bar in bars.patches:
+    ax.annotate(f'{int(bar.get_height())}', 
+                (bar.get_x() + bar.get_width() / 2, bar.get_height()), 
+                ha='center', va='bottom')
+
+st.pyplot(fig)
+
+# Seasonal Analysis
+st.markdown("### Seasonal Analysis")
+st.write("1: Spring\n\n2: Summer\n\n3: Fall\n\n4: Winter")
+
+# Seasonal Rentals Analysis
+seasonal_rentals = filtered_df.groupby('season')['total_rentals'].mean()
+
+# Bar plot dengan warna berbeda untuk setiap musim
+fig, ax = plt.subplots(figsize=(10, 5))
+colors = sns.color_palette('Set3', len(seasonal_rentals))  # Menggunakan palet warna "Set3"
+bars = seasonal_rentals.plot(kind='bar', color=colors, ax=ax)
+ax.set_title("Average Rentals by Season", fontsize=16)
+ax.set_ylabel("Average Rentals", fontsize=12)
+ax.set_xlabel("Season", fontsize=10)
+plt.xticks(rotation=0)
+
+# Menambahkan label data di atas batang
+for bar in bars.patches:
+    ax.annotate(f'{int(bar.get_height())}', 
+                (bar.get_x() + bar.get_width() / 2, bar.get_height()), 
+                ha='center', va='bottom')
+
+st.pyplot(fig)
+>>>>>>> b010cce (revisi submission notebook.ipynb, requirements.txt, dan dashboard.py)
