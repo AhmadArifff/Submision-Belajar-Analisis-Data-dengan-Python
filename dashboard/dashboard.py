@@ -2,8 +2,15 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+
 data_path = "main_data.csv"
-df = pd.read_csv(data_path)
+
+if not os.path.isfile(data_path):
+    st.error("File not found. Please check the path.")
+else:
+    df = pd.read_csv(data_path)
+
 st.title("Bike Usage Analysis Dashboard")
 st.write("Welcome to the bike usage analysis dashboard!")
 st.markdown("### Data Overview")
