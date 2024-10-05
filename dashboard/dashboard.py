@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-data_path = "main_data.csv"
+data_path = "dashboard/main_data.csv"
 
 if not os.path.isfile(data_path):
-    st.error("File not found. Please check the path.")
+    st.error(f"File {data_path} not found. Please make sure the file exists.")
 else:
     df = pd.read_csv(data_path)
 
